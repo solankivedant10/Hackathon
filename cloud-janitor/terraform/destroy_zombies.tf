@@ -17,6 +17,27 @@ provider "aws" {
 }
 
 # ==============================================================================
+# 🛡️ SAFETY INTERLOCK CONFIGURATION
+# ==============================================================================
+
+variable "enable_destruction" {
+  description = "Safety flag - must be set to true to allow resource destruction"
+  type        = bool
+  default     = false
+}
+
+variable "confirmation_text" {
+  description = "Type 'DESTROY_ZOMBIES' to confirm you want to proceed"
+  type        = string
+  default     = ""
+  
+  validation {
+    condition     = var.confirmation_text == "DESTROY_ZOMBIES" || var.confirmation_text == ""
+    error_message = "SAFETY LOCK ENGAGED: You must set confirmation_text to 'DESTROY_ZOMBIES' to proceed."
+  }
+}
+
+# ==============================================================================
 # EC2 INSTANCES TO TERMINATE
 # ==============================================================================
 
@@ -24,6 +45,9 @@ provider "aws" {
 # Reason: CPU < 5% for 30+ days
 # Monthly Cost: $145.50
 resource "aws_ec2_instance_state" "terminate_i_0a1b2c3d4e5f6" {
+  # 🔒 THE SAFETY LOCK: This resource is ignored unless safety is explicitly disabled
+  count       = var.enable_destruction && var.confirmation_text == "DESTROY_ZOMBIES" ? 1 : 0
+  
   instance_id = "i-0a1b2c3d4e5f6"
   state       = "terminated"
 }
@@ -40,7 +64,7 @@ resource "aws_ebs_volume" "zombie_vol_9x8y7z6w5v4u3" {
   # This is a placeholder to manage the volume lifecycle
   # To delete: Run `terraform destroy -target=aws_ebs_volume.zombie_vol_9x8y7z6w5v4u3`
   # Or manually delete using: aws ec2 delete-volume --volume-id vol-9x8y7z6w5v4u3 --region us-west-2
-  
+   
   # Note: This resource block is for tracking only. 
   # Use terraform import or manually delete the volume.
 }
@@ -57,7 +81,7 @@ resource "aws_ebs_snapshot" "zombie_snap_1a2b3c4d5e6f7" {
   # This is a placeholder to manage the snapshot lifecycle
   # To delete: Run `terraform destroy -target=aws_ebs_snapshot.zombie_snap_1a2b3c4d5e6f7`
   # Or manually delete using: aws ec2 delete-snapshot --snapshot-id snap-1a2b3c4d5e6f7 --region us-east-1
-  
+   
   # Note: This resource block is for tracking only.
   # Use terraform import or manually delete the snapshot.
 }
@@ -89,9 +113,9 @@ resource "aws_ebs_snapshot" "zombie_snap_1a2b3c4d5e6f7" {
 # 
 # Or use Terraform:
 # resource "aws_db_instance" "zombie_rds_staging" {
-#   identifier = "i-staging-db-unused"
-#   # Import first: terraform import aws_db_instance.zombie_rds_staging i-staging-db-unused
-#   # Then destroy: terraform destroy -target=aws_db_instance.zombie_rds_staging
+#    identifier = "i-staging-db-unused"
+#    # Import first: terraform import aws_db_instance.zombie_rds_staging i-staging-db-unused
+#    # Then destroy: terraform destroy -target=aws_db_instance.zombie_rds_staging
 # }
 
 # ==============================================================================
@@ -129,8 +153,8 @@ resource "aws_ebs_snapshot" "zombie_snap_1a2b3c4d5e6f7" {
 #
 # Alternative using Terraform (after manual emptying):
 # resource "aws_s3_bucket" "zombie_s3_old_logs" {
-#   bucket = "s3-old-logs-bucket"
-#   force_destroy = true  # Use with extreme caution!
+#    bucket = "s3-old-logs-bucket"
+#    force_destroy = true  # Use with extreme caution!
 # }
 # Then run: terraform destroy -target=aws_s3_bucket.zombie_s3_old_logs
 
@@ -138,13 +162,14 @@ resource "aws_ebs_snapshot" "zombie_snap_1a2b3c4d5e6f7" {
 # USAGE INSTRUCTIONS
 # ==============================================================================
 #
-# To terminate EC2 instances only:
-#   terraform init
-#   terraform plan
-#   terraform apply
+# SAFETY FIRST: To execute this configuration, you must:
+#   1. Set enable_destruction = true
+#   2. Set confirmation_text = "DESTROY_ZOMBIES"
 #
-# To destroy specific resources:
-#   terraform destroy -target=aws_ec2_instance_state.terminate_i_0a1b2c3d4e5f6
+# Example to Apply Fixes:
+#   terraform init
+#   terraform plan -var="enable_destruction=true" -var="confirmation_text=DESTROY_ZOMBIES"
+#   terraform apply -var="enable_destruction=true" -var="confirmation_text=DESTROY_ZOMBIES"
 #
 # Total estimated monthly savings after cleanup: $626.84
 # Total estimated annual savings after cleanup: $7,522.08
