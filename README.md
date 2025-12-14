@@ -61,6 +61,12 @@ Structured JSON reports with savings breakdowns
 ![alt text](kestra-proof.png) 
 ![alt text](coderabbit-proof.png)
 
+⚠️ Demo Data Disclaimer
+> To ensure safety and privacy during the public hackathon evaluation, this project is currently connected to a Mock Data Pipeline.
+> Input: Simulated AWS billing JSON (to avoid exposing real credit card/account usage).
+> Processing: Real Kestra + Gemini AI analysis (the agent actually "reads" and interprets the mock data).
+> Output: Real Terraform code generation (based on the findings).
+
 ✨ Autonomous Code Generation
 
 Terraform IaC generated for detected waste
