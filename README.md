@@ -232,8 +232,4 @@ MIT License
 
 🙏 Acknowledgments
 
-<<<<<<< HEAD
 Built for AssembleHack’25 using Cline, Kestra, Google Gemini, CodeRabbit, and Vercel.
-=======
-Built for AssembleHack’25 using Cline, Kestra, Google Gemini, CodeRabbit, and Vercel.
->>>>>>> 5c88ed2561ff40c598e74a3363206ba87d849834
